@@ -2,15 +2,19 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/main.js",
+      "src": "dist/src/main.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "dist/main.js",
+      "dest": "dist/src/main.js",
       "methods": ["GET", "POST", "PATCH", "DELETE"]
     }
-  ]
+  ],
+  "env": {
+    "DATABASE_URL": "postgresql://cafetaria_owner:ypPnx7Zrj3JQ@ep-cold-wave-a1bp1q9w-pooler.ap-southeast-1.aws.neon.tech/cafetaria?sslmode=require",
+    "JWT_SECRET": "9f264432f2a3b800e167bbc5b0576c6890d03dce20d185752bec10417eb08b903240cd087e3bc920068374dd1a992c781172d08694f5f180c87211f4f3eef398"
+  }
 }

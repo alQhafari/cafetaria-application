@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id      Int      @id @default(autoincrement())
+  username String
+  fullname String
+  password String
+  role Role?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  caffeOwned CaffeOwner[]
+  caffeManager CaffeManager[]
+}
+
+enum Role {
+  SUPERADMIN
+  OWNER
+  MANAGER
+}
+
+model Caffe {
+  id Int @id @default(autoincrement())
+  name String
+  address String
+  phoneNumber String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  menus Menu[]
+
+  owners CaffeOwner[]
+  managers CaffeManager[]
+}
+
+model Menu {
+  id Int @id @default(autoincrement())
+  name String
+  price Float
+  isRecommendation Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  caffe Caffe @relation(fields: [caffeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  caffeId Int
+}
+
+model CaffeOwner {
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ownerId Int
+  caffe Caffe @relation(fields: [caffeId],references: [id], onDelete: Cascade, onUpdate: Cascade)
+  caffeId Int
+
+  @@id([ownerId, caffeId])
+}
+
+model CaffeManager {
+  manager User @relation(fields: [managerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  managerId Int
+  caffe Caffe @relation(fields: [caffeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  caffeId Int
+
+  @@id([managerId, caffeId])
+}

@@ -181,6 +181,13 @@ export class MenusService {
     req: any,
   ): Promise<Menu> {
     try {
+      if (req.user.role === Role.SUPERADMIN) {
+        return await this.prisma.menu.update({
+          where: { id },
+          data: updateMenuDto,
+        });
+      }
+
       const menu = await this.prisma.menu.findUniqueOrThrow({
         where: { id },
         include: {
@@ -216,6 +223,12 @@ export class MenusService {
 
   async remove(id: number, req: any): Promise<Menu> {
     try {
+      if (req.user.role === Role.SUPERADMIN) {
+        return await this.prisma.menu.delete({
+          where: { id },
+        });
+      }
+
       const menu = await this.prisma.menu.findUniqueOrThrow({
         where: { id },
         include: {

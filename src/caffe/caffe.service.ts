@@ -115,6 +115,36 @@ export class CaffeService {
 
   async findOne(id: number, req: any): Promise<Caffe> {
     try {
+      if (req.user.role === Role.SUPERADMIN) {
+        return await this.prisma.caffe.findUniqueOrThrow({
+          where: { id },
+          include: {
+            owners: {
+              select: {
+                owner: {
+                  select: {
+                    id: true,
+                    fullname: true,
+                    username: true,
+                  },
+                },
+              },
+            },
+            managers: {
+              select: {
+                manager: {
+                  select: {
+                    id: true,
+                    fullname: true,
+                    username: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+
       const caffe = await this.prisma.caffe.findUniqueOrThrow({
         where: { id },
         include: {
@@ -149,6 +179,13 @@ export class CaffeService {
     req: any,
   ): Promise<Caffe> {
     try {
+      if (req.user.role === Role.SUPERADMIN) {
+        return await this.prisma.caffe.update({
+          where: { id },
+          data: updateCaffeDto,
+        });
+      }
+
       const caffe = await this.prisma.caffe.findUniqueOrThrow({
         where: { id },
         include: {
@@ -174,6 +211,12 @@ export class CaffeService {
 
   async remove(id: number, req: any): Promise<Caffe> {
     try {
+      if (req.user.role === Role.SUPERADMIN) {
+        return await this.prisma.caffe.delete({
+          where: { id },
+        });
+      }
+
       const caffe = await this.prisma.caffe.findUniqueOrThrow({
         where: { id },
         include: {
